@@ -10,7 +10,7 @@ class AppsHandler {
       EventChannel('apps_handler/apps_channel');
 
   /// Returns a list of installed applications on the device
-  /// 
+  ///
   /// [includeSystemApps] - Whether to include system applications
   /// [includeAppIcons] - Whether to include application icons
   /// [onlyAppsWithLaunchIntent] - Whether to only include apps that can be launched
@@ -25,11 +25,13 @@ class AppsHandler {
       'only_apps_with_launch_intent': onlyAppsWithLaunchIntent,
     });
 
-    return apps.map((app) => AppInfo.fromMap(app as Map<dynamic, dynamic>)).toList();
+    return apps
+        .map((app) => AppInfo.fromMap(app as Map<dynamic, dynamic>))
+        .toList();
   }
 
   /// Returns information about a specific app by package name
-  /// 
+  ///
   /// [packageName] - The package name of the application
   /// [includeAppIcon] - Whether to include the application icon
   static Future<AppInfo?> getApp(
@@ -37,8 +39,7 @@ class AppsHandler {
     bool includeAppIcon = false,
   }) async {
     try {
-      final Map<dynamic, dynamic>? app =
-          await _channel.invokeMethod('getApp', {
+      final Map<dynamic, dynamic>? app = await _channel.invokeMethod('getApp', {
         'package_name': packageName,
         'include_app_icon': includeAppIcon,
       });
@@ -60,7 +61,7 @@ class AppsHandler {
   }
 
   /// Opens an installed application by package name
-  /// 
+  ///
   /// Returns true if the app was launched successfully
   static Future<bool> openApp(String packageName) async {
     return await _channel.invokeMethod('openApp', {
@@ -69,7 +70,7 @@ class AppsHandler {
   }
 
   /// Uninstalls an application by package name
-  /// 
+  ///
   /// Returns true if the uninstall process was initiated successfully
   /// Note: This will show the system uninstall dialog to the user
   static Future<bool> uninstallApp(String packageName) async {
@@ -80,8 +81,7 @@ class AppsHandler {
 
   /// Stream of app install/uninstall events
   static Stream<AppEvent> get appChanges {
-    return _eventChannel
-        .receiveBroadcastStream()
-        .map((dynamic event) => AppEvent.fromMap(event as Map<dynamic, dynamic>));
+    return _eventChannel.receiveBroadcastStream().map(
+        (dynamic event) => AppEvent.fromMap(event as Map<dynamic, dynamic>));
   }
 }

@@ -290,3 +290,9 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Credits
+
+This project is inspired by and builds upon the work of:
+- [installed_apps](https://github.com/sharmadhiraj/installed_apps)
+- [flutter_plugin_device_apps](https://github.com/g123k/flutter_plugin_device_apps)

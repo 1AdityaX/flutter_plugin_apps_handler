@@ -52,7 +52,8 @@ class AppEvent {
   }
 
   @override
-  String toString() => 'AppEvent(packageName: $packageName, event: ${_eventTypeToString(event)})';
+  String toString() =>
+      'AppEvent(packageName: $packageName, event: ${_eventTypeToString(event)})';
 
   @override
   bool operator ==(Object other) {

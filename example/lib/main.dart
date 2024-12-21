@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Installed Apps Demo',
+      title: 'Apps Handler Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
         useMaterial3: true,
@@ -130,7 +130,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Installed Apps'),
+        title: const Text('Apps Handler'),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
@@ -165,7 +165,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(app.packageName),
-                            Text('Version: ${app.versionName ?? 'Unknown'} (${app.versionCode})'),
+                            Text(
+                                'Version: ${app.versionName ?? 'Unknown'} (${app.versionCode})'),
                             Text('Category: ${app.category}'),
                           ],
                         ),
@@ -180,7 +181,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                   context: context,
                                   builder: (context) => AlertDialog(
                                     title: Text('Uninstall ${app.appName}?'),
-                                    content: Text('Are you sure you want to uninstall ${app.appName}?'),
+                                    content: Text(
+                                        'Are you sure you want to uninstall ${app.appName}?'),
                                     actions: [
                                       TextButton(
                                         onPressed: () => Navigator.pop(context),
@@ -215,14 +217,18 @@ class _MyHomePageState extends State<MyHomePage> {
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     Text('Package: ${app.packageName}'),
-                                    Text('Version: ${app.versionName ?? 'Unknown'} (${app.versionCode})'),
+                                    Text(
+                                        'Version: ${app.versionName ?? 'Unknown'} (${app.versionCode})'),
                                     Text('Category: ${app.category}'),
                                     Text('System App: ${app.systemApp}'),
                                     Text('Enabled: ${app.enabled}'),
                                     Text('Data Dir: ${app.dataDir}'),
-                                    Text('Installer: ${app.installerPackageName ?? 'Unknown'}'),
-                                    Text('Install Time: ${DateTime.fromMillisecondsSinceEpoch(app.installTime)}'),
-                                    Text('Update Time: ${DateTime.fromMillisecondsSinceEpoch(app.updateTime)}'),
+                                    Text(
+                                        'Installer: ${app.installerPackageName ?? 'Unknown'}'),
+                                    Text(
+                                        'Install Time: ${DateTime.fromMillisecondsSinceEpoch(app.installTime)}'),
+                                    Text(
+                                        'Update Time: ${DateTime.fromMillisecondsSinceEpoch(app.updateTime)}'),
                                   ],
                                 ),
                               ),
