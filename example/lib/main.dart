@@ -98,6 +98,23 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+  Future<void> _openAppSettings(String packageName) async {
+    try {
+      final opened = await AppsHandler.openAppSettings(packageName);
+      if (!opened && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to open app settings')),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error opening app settings: $e')),
+        );
+      }
+    }
+  }
+
   Future<void> _uninstallApp(String packageName) async {
     try {
       final result = await AppsHandler.uninstallApp(packageName);
@@ -175,6 +192,12 @@ class _MyHomePageState extends State<MyHomePage> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             IconButton(
+                              icon: const Icon(Icons.settings),
+                              onPressed: () =>
+                                  _openAppSettings(app.packageName),
+                              tooltip: 'Open Settings',
+                            ),
+                            IconButton(
                               icon: const Icon(Icons.delete),
                               onPressed: () {
                                 showDialog(
@@ -199,10 +222,12 @@ class _MyHomePageState extends State<MyHomePage> {
                                   ),
                                 );
                               },
+                              tooltip: 'Uninstall',
                             ),
                             IconButton(
                               icon: const Icon(Icons.launch),
                               onPressed: () => _openApp(app.packageName),
+                              tooltip: 'Launch',
                             ),
                           ],
                         ),
@@ -236,6 +261,13 @@ class _MyHomePageState extends State<MyHomePage> {
                                 TextButton(
                                   onPressed: () => Navigator.pop(context),
                                   child: const Text('Close'),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                    _openAppSettings(app.packageName);
+                                  },
+                                  child: const Text('Settings'),
                                 ),
                                 TextButton(
                                   onPressed: () {
