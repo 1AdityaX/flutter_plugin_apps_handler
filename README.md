@@ -9,6 +9,7 @@ A Flutter plugin to get information about installed applications on Android devi
 - Monitor app install/uninstall events in real-time
 - Launch applications by package name
 - Check if specific apps are installed
+- Open app system settings
 - Support for app icons
 - Detailed app metadata (version, category, install time, etc.)
 - Uninstall applications
@@ -112,6 +113,15 @@ Future<void> launchApp(String packageName) async {
 }
 ```
 
+### Open App Settings
+
+```dart
+Future<void> openSettings(String packageName) async {
+  final opened = await AppsHandler.openAppSettings(packageName);
+  print('Settings opened: $opened');
+}
+```
+
 ### Uninstall an Application
 
 ```dart
@@ -172,6 +182,11 @@ static Future<bool> isAppInstalled(String packageName)
 ##### `openApp`
 ```dart
 static Future<bool> openApp(String packageName)
+```
+
+##### `openAppSettings`
+```dart
+static Future<bool> openAppSettings(String packageName)
 ```
 
 ##### `uninstallApp`
@@ -276,6 +291,7 @@ class _AppsHandlerDemoState extends State<AppsHandlerDemo> {
           title: Text(app.appName),
           subtitle: Text(app.packageName),
           onTap: () => AppsHandler.openApp(app.packageName),
+          onLongPress: () => AppsHandler.openAppSettings(app.packageName),
         );
       },
     );
