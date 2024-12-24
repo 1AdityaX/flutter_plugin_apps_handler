@@ -1,6 +1,6 @@
 name: apps_handler
 description: A Flutter plugin to manage and monitor installed applications on Android devices.
-version: 1.0.0
+version: 1.0.1
 homepage: https://github.com/1AdityaX/flutter_plugin_apps_handler
 
 environment:
