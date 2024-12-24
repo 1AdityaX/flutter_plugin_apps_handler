@@ -69,6 +69,16 @@ class AppsHandler {
     });
   }
 
+  /// Opens the system settings page for an application
+  ///
+  /// [packageName] - The package name of the application
+  /// Returns true if the settings page was opened successfully
+  static Future<bool> openAppSettings(String packageName) async {
+    return await _channel.invokeMethod('openAppSettings', {
+      'package_name': packageName,
+    });
+  }
+
   /// Uninstalls an application by package name
   ///
   /// Returns true if the uninstall process was initiated successfully

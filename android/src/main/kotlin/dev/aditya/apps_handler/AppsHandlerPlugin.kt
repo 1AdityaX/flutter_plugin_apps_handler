@@ -120,7 +120,21 @@ class AppsHandlerPlugin : FlutterPlugin, MethodCallHandler {
                             result.success(uninstalled)
                         }
                     }
-                    
+                    "openAppSettings" -> {
+                        val packageName = call.argument<String>("package_name")
+                        
+                        if (packageName == null) {
+                            withContext(Dispatchers.Main) {
+                                result.error("INVALID_ARGUMENT", "Package name is required", null)
+                            }
+                            return@launch
+                        }
+
+                        val opened = appsService.openAppSettings(packageName)
+                        withContext(Dispatchers.Main) {
+                            result.success(opened)
+                        }
+                    }
                     else -> {
                         withContext(Dispatchers.Main) {
                             result.notImplemented()
