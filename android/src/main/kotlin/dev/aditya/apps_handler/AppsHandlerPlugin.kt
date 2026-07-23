@@ -7,10 +7,12 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class AppsHandlerPlugin : FlutterPlugin, MethodCallHandler {
     private lateinit var context: Context
@@ -18,9 +20,10 @@ class AppsHandlerPlugin : FlutterPlugin, MethodCallHandler {
     private lateinit var eventChannel: EventChannel
     private lateinit var appsService: AppsService
     private lateinit var applicationChangeListener: ApplicationChangeListener
-    private val scope = CoroutineScope(Dispatchers.Main)
+    private lateinit var scope: CoroutineScope
 
     override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
+        scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
         context = flutterPluginBinding.applicationContext
         appsService = AppsService(context)
         applicationChangeListener = ApplicationChangeListener(context)
@@ -34,7 +37,9 @@ class AppsHandlerPlugin : FlutterPlugin, MethodCallHandler {
 
     override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
         methodChannel.setMethodCallHandler(null)
+        applicationChangeListener.dispose()
         eventChannel.setStreamHandler(null)
+        scope.cancel()
     }
 
     override fun onMethodCall(call: MethodCall, result: Result) {
@@ -51,100 +56,75 @@ class AppsHandlerPlugin : FlutterPlugin, MethodCallHandler {
                             includeAppIcons,
                             onlyAppsWithLaunchIntent
                         )
-                        withContext(Dispatchers.Main) {
-                            result.success(apps)
-                        }
+                        result.success(apps)
                     }
                     "getApp" -> {
                         val packageName = call.argument<String>("package_name")
                         val includeAppIcon = call.argument<Boolean>("include_app_icon") ?: false
 
                         if (packageName == null) {
-                            withContext(Dispatchers.Main) {
-                                result.error("INVALID_ARGUMENT", "Package name is required", null)
-                            }
+                            result.error("INVALID_ARGUMENT", "Package name is required", null)
                             return@launch
                         }
 
                         val app = appsService.getApp(packageName, includeAppIcon)
-                        withContext(Dispatchers.Main) {
-                            if (app != null) {
-                                result.success(app)
-                            } else {
-                                result.error("APP_NOT_FOUND", "App not found", null)
-                            }
+                        if (app != null) {
+                            result.success(app)
+                        } else {
+                            result.error("APP_NOT_FOUND", "App not found", null)
                         }
                     }
                     "isAppInstalled" -> {
                         val packageName = call.argument<String>("package_name")
-                        
+
                         if (packageName == null) {
-                            withContext(Dispatchers.Main) {
-                                result.error("INVALID_ARGUMENT", "Package name is required", null)
-                            }
+                            result.error("INVALID_ARGUMENT", "Package name is required", null)
                             return@launch
                         }
 
                         val isInstalled = appsService.isAppInstalled(packageName)
-                        withContext(Dispatchers.Main) {
-                            result.success(isInstalled)
-                        }
+                        result.success(isInstalled)
                     }
                     "openApp" -> {
                         val packageName = call.argument<String>("package_name")
-                        
+                        val activityName = call.argument<String>("activity_name")
+
                         if (packageName == null) {
-                            withContext(Dispatchers.Main) {
-                                result.error("INVALID_ARGUMENT", "Package name is required", null)
-                            }
+                            result.error("INVALID_ARGUMENT", "Package name is required", null)
                             return@launch
                         }
 
-                        val launched = appsService.launchApp(packageName)
-                        withContext(Dispatchers.Main) {
-                            result.success(launched)
-                        }
+                        val launched = appsService.launchApp(packageName, activityName)
+                        result.success(launched)
                     }
                     "uninstallApp" -> {
                         val packageName = call.argument<String>("package_name")
-                        
+
                         if (packageName == null) {
-                            withContext(Dispatchers.Main) {
-                                result.error("INVALID_ARGUMENT", "Package name is required", null)
-                            }
+                            result.error("INVALID_ARGUMENT", "Package name is required", null)
                             return@launch
                         }
 
                         val uninstalled = appsService.uninstallApp(packageName)
-                        withContext(Dispatchers.Main) {
-                            result.success(uninstalled)
-                        }
+                        result.success(uninstalled)
                     }
                     "openAppSettings" -> {
                         val packageName = call.argument<String>("package_name")
-                        
+
                         if (packageName == null) {
-                            withContext(Dispatchers.Main) {
-                                result.error("INVALID_ARGUMENT", "Package name is required", null)
-                            }
+                            result.error("INVALID_ARGUMENT", "Package name is required", null)
                             return@launch
                         }
 
                         val opened = appsService.openAppSettings(packageName)
-                        withContext(Dispatchers.Main) {
-                            result.success(opened)
-                        }
+                        result.success(opened)
                     }
-                    else -> {
-                        withContext(Dispatchers.Main) {
-                            result.notImplemented()
-                        }
-                    }
+                    else -> result.notImplemented()
                 }
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
-                withContext(Dispatchers.Main) {
-                    result.error("UNEXPECTED_ERROR", e.message, null)
-                }
+                result.error("UNEXPECTED_ERROR", e.message, null)
             }
         }
     }

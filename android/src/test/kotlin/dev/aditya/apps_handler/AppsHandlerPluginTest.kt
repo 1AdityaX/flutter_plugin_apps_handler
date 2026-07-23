@@ -1,27 +1,27 @@
 package dev.aditya.apps_handler
 
-import io.flutter.plugin.common.MethodCall
-import io.flutter.plugin.common.MethodChannel
 import kotlin.test.Test
-import org.mockito.Mockito
-
-/*
- * This demonstrates a simple unit test of the Kotlin portion of this plugin's implementation.
- *
- * Once you have built the plugin's example app, you can run these tests from the command
- * line by running `./gradlew testDebugUnitTest` in the `example/android/` directory, or
- * you can run them directly from IDEs that support JUnit such as Android Studio.
- */
+import kotlin.test.assertEquals
 
 internal class AppsHandlerPluginTest {
-  @Test
-  fun onMethodCall_getPlatformVersion_returnsExpectedValue() {
-    val plugin = AppsHandlerPlugin()
+    @Test
+    fun appInfoIncludesActivityName() {
+        val app = AppInfo(
+            name = "Example",
+            packageName = "com.example",
+            activityName = "com.example.MainActivity",
+            category = "undefined",
+            versionName = null,
+            versionCode = 1,
+            dataDir = "",
+            systemApp = false,
+            installerPackageName = null,
+            drawable = null,
+            enabled = true,
+            installTimeMillis = 0,
+            updateTimeMillis = 0
+        )
 
-    val call = MethodCall("getPlatformVersion", null)
-    val mockResult: MethodChannel.Result = Mockito.mock(MethodChannel.Result::class.java)
-    plugin.onMethodCall(call, mockResult)
-
-    Mockito.verify(mockResult).success("Android " + android.os.Build.VERSION.RELEASE)
-  }
+        assertEquals("com.example.MainActivity", app.toMap()["activity_name"])
+    }
 }

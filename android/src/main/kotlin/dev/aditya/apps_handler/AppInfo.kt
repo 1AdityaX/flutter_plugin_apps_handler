@@ -13,6 +13,7 @@ import java.io.ByteArrayOutputStream
 data class AppInfo(
     val name: String,
     val packageName: String,
+    val activityName: String?,
     val category: String,
     val versionName: String?,
     val versionCode: Long,
@@ -28,6 +29,7 @@ data class AppInfo(
         fun createFromPackageInfo(
             context: Context,
             packageInfo: PackageInfo,
+            activityName: String? = null,
             loadIcon: Boolean = false
         ): AppInfo? {
             return try {
@@ -38,6 +40,7 @@ data class AppInfo(
                 AppInfo(
                     name = applicationInfo.loadLabel(packageManager).toString(),
                     packageName = packageInfo.packageName,
+                    activityName = activityName,
                     category = category,
                     versionName = packageInfo.versionName,
                     versionCode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
@@ -98,6 +101,7 @@ data class AppInfo(
         val map = mutableMapOf<String, Any?>( 
             "app_name" to name,
             "package_name" to packageName,
+            "activity_name" to activityName,
             "category" to category,
             "version_name" to versionName,
             "version_code" to versionCode,

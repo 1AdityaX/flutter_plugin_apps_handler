@@ -1,6 +1,7 @@
 class AppInfo {
   final String appName;
   final String packageName;
+  final String? activityName;
   final String category;
   final String? versionName;
   final int versionCode;
@@ -15,6 +16,7 @@ class AppInfo {
   const AppInfo({
     required this.appName,
     required this.packageName,
+    this.activityName,
     required this.category,
     required this.versionName,
     required this.versionCode,
@@ -31,6 +33,7 @@ class AppInfo {
     return AppInfo(
       appName: map['app_name'] as String,
       packageName: map['package_name'] as String,
+      activityName: map['activity_name'] as String?,
       category: map['category'] as String,
       versionName: map['version_name'] as String?,
       versionCode: map['version_code'] as int,
@@ -48,6 +51,7 @@ class AppInfo {
     return {
       'app_name': appName,
       'package_name': packageName,
+      'activity_name': activityName,
       'category': category,
       'version_name': versionName,
       'version_code': versionCode,
@@ -63,7 +67,8 @@ class AppInfo {
 
   @override
   String toString() {
-    return 'AppInfo(appName: $appName, packageName: $packageName, category: $category, '
+    return 'AppInfo(appName: $appName, packageName: $packageName, '
+        'activityName: $activityName, category: $category, '
         'versionName: $versionName, versionCode: $versionCode, dataDir: $dataDir, '
         'systemApp: $systemApp, installerPackageName: $installerPackageName, '
         'enabled: $enabled, installTime: $installTime, updateTime: $updateTime, '

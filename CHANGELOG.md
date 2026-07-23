@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.0.0 - 2026-07-24
+
+- **Breaking:** `openApp` now accepts an `AppInfo`
+- Launch apps by resolved activity component
+- Update build dependencies
+
 ## 1.0.1 - 2024-12-24
 
 ### Added

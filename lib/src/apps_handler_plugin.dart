@@ -6,8 +6,9 @@ import 'package:apps_handler/src/models/app_info.dart';
 
 class AppsHandler {
   static const MethodChannel _channel = MethodChannel('apps_handler');
-  static const EventChannel _eventChannel =
-      EventChannel('apps_handler/apps_channel');
+  static const EventChannel _eventChannel = EventChannel(
+    'apps_handler/apps_channel',
+  );
 
   /// Returns a list of installed applications on the device
   ///
@@ -60,13 +61,15 @@ class AppsHandler {
     });
   }
 
-  /// Opens an installed application by package name
+  /// Opens an installed application
   ///
   /// Returns true if the app was launched successfully
-  static Future<bool> openApp(String packageName) async {
-    return await _channel.invokeMethod('openApp', {
-      'package_name': packageName,
-    });
+  static Future<bool> openApp(AppInfo app) async {
+    return await _channel.invokeMethod<bool>('openApp', {
+          'package_name': app.packageName,
+          'activity_name': app.activityName,
+        }) ??
+        false;
   }
 
   /// Opens the system settings page for an application
@@ -92,6 +95,7 @@ class AppsHandler {
   /// Stream of app install/uninstall events
   static Stream<AppEvent> get appChanges {
     return _eventChannel.receiveBroadcastStream().map(
-        (dynamic event) => AppEvent.fromMap(event as Map<dynamic, dynamic>));
+          (dynamic event) => AppEvent.fromMap(event as Map<dynamic, dynamic>),
+        );
   }
 }

@@ -22,7 +22,7 @@ Add this to your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  apps_handler: ^latest_version
+  apps_handler: ^2.0.0
 ```
 
 ### Platform Support
@@ -107,8 +107,8 @@ Future<void> checkAppInstallation(String packageName) async {
 ### Launch an Application
 
 ```dart
-Future<void> launchApp(String packageName) async {
-  final launched = await AppsHandler.openApp(packageName);
+Future<void> launchApp(AppInfo app) async {
+  final launched = await AppsHandler.openApp(app);
   print('App launch ${launched ? 'successful' : 'failed'}');
 }
 ```
@@ -181,7 +181,7 @@ static Future<bool> isAppInstalled(String packageName)
 
 ##### `openApp`
 ```dart
-static Future<bool> openApp(String packageName)
+static Future<bool> openApp(AppInfo app)
 ```
 
 ##### `openAppSettings`
@@ -205,6 +205,7 @@ static Stream<AppEvent> get appChanges
 class AppInfo {
   final String appName;
   final String packageName;
+  final String? activityName;
   final String category;
   final String? versionName;
   final int versionCode;
@@ -290,7 +291,7 @@ class _AppsHandlerDemoState extends State<AppsHandlerDemo> {
             : Icon(Icons.android),
           title: Text(app.appName),
           subtitle: Text(app.packageName),
-          onTap: () => AppsHandler.openApp(app.packageName),
+          onTap: () => AppsHandler.openApp(app),
           onLongPress: () => AppsHandler.openAppSettings(app.packageName),
         );
       },

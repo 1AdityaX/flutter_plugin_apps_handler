@@ -13,6 +13,7 @@ class ApplicationChangeListener(private val context: Context) : BroadcastReceive
         eventSink = events
         val intentFilter = IntentFilter().apply {
             addAction(Intent.ACTION_PACKAGE_ADDED)
+            addAction(Intent.ACTION_PACKAGE_CHANGED)
             addAction(Intent.ACTION_PACKAGE_REMOVED)
             addAction(Intent.ACTION_PACKAGE_REPLACED)
             addDataScheme("package")
@@ -21,6 +22,10 @@ class ApplicationChangeListener(private val context: Context) : BroadcastReceive
     }
 
     override fun onCancel(arguments: Any?) {
+        dispose()
+    }
+
+    internal fun dispose() {
         eventSink = null
         try {
             context.unregisterReceiver(this)
@@ -34,8 +39,11 @@ class ApplicationChangeListener(private val context: Context) : BroadcastReceive
 
         val packageName = intent.data?.schemeSpecificPart ?: return
         val event = when (intent.action) {
-            Intent.ACTION_PACKAGE_ADDED -> "installed"
-            Intent.ACTION_PACKAGE_REMOVED -> "uninstalled"
+            Intent.ACTION_PACKAGE_ADDED ->
+                if (intent.getBooleanExtra(Intent.EXTRA_REPLACING, false)) return else "installed"
+            Intent.ACTION_PACKAGE_REMOVED ->
+                if (intent.getBooleanExtra(Intent.EXTRA_REPLACING, false)) return else "uninstalled"
+            Intent.ACTION_PACKAGE_CHANGED,
             Intent.ACTION_PACKAGE_REPLACED -> "updated"
             else -> return
         }
@@ -44,7 +52,7 @@ class ApplicationChangeListener(private val context: Context) : BroadcastReceive
             "package_name" to packageName,
             "event" to event
         )
-        
+
         eventSink?.success(eventData)
     }
 }

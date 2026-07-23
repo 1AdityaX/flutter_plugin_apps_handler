@@ -81,9 +81,9 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  Future<void> _openApp(String packageName) async {
+  Future<void> _openApp(AppInfo app) async {
     try {
-      final launched = await AppsHandler.openApp(packageName);
+      final launched = await AppsHandler.openApp(app);
       if (!launched && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Failed to open app')),
@@ -226,7 +226,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             ),
                             IconButton(
                               icon: const Icon(Icons.launch),
-                              onPressed: () => _openApp(app.packageName),
+                              onPressed: () => _openApp(app),
                               tooltip: 'Launch',
                             ),
                           ],
@@ -272,7 +272,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 TextButton(
                                   onPressed: () {
                                     Navigator.pop(context);
-                                    _openApp(app.packageName);
+                                    _openApp(app);
                                   },
                                   child: const Text('Launch'),
                                 ),
